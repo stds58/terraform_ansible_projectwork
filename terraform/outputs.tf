@@ -22,5 +22,3 @@ output "internal_ip_address_vm3" {
 output "external_ip_address_vm3" {
   value = module.vm3.external_ip_address
 }
-
-

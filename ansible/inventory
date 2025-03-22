@@ -1,12 +1,12 @@
 [app]
-vm2 ansible_host=158.160.100.132 ansible_user=ubuntu
-vm3 ansible_host=158.160.101.72 ansible_user=ubuntu
+vm2 ansible_host=192.168.10.19 ansible_user=ubuntu
+vm3 ansible_host=192.168.10.13 ansible_user=cloud-user
 
 [database]
-vm1 ansible_host=158.160.110.176 ansible_user=ubuntu
+vm1 ansible_host=192.168.10.22 ansible_user=ubuntu
 
 [web]
-vm1 ansible_host=158.160.110.176 ansible_user=ubuntu
+vm1 ansible_host=192.168.10.22 ansible_user=ubuntu
 
 [all:vars]
 ansible_ssh_private_key_file=~/.ssh/terraform_20250320

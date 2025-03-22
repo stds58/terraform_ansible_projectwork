@@ -1,4 +1,10 @@
 locals {
+  depends_on = [
+    module.vm1,
+    module.vm2,
+    module.vm3,
+    null_resource.copy_private_key_to_vm1
+  ]
   inventory_template = templatefile("${path.module}/inventory.tpl", {
     vm1_ip = module.vm1.internal_ip_address
     vm2_ip = module.vm2.internal_ip_address
@@ -7,13 +13,24 @@ locals {
 }
 
 resource "local_file" "inventory" {
+  depends_on = [
+    module.vm1,
+    module.vm2,
+    module.vm3,
+    null_resource.copy_private_key_to_vm1
+  ]
   content  = local.inventory_template
   filename = "${path.root}/../ansible/inventory"
 }
 
 # Provisioner для установки Ansible на vm1
 resource "null_resource" "install_ansible" {
-  depends_on = [module.vm1]
+  depends_on = [
+    module.vm1,
+    module.vm2,
+    module.vm3,
+    null_resource.copy_private_key_to_vm1
+  ]
 
   connection {
     type        = "ssh"
@@ -31,7 +48,9 @@ resource "null_resource" "install_ansible" {
 }
 
 resource "null_resource" "clone_playbooks" {
-  depends_on = [module.vm1]
+  depends_on = [
+    null_resource.install_ansible   # Убедитесь, что Ansible установлен
+  ]
 
   connection {
     type        = "ssh"
@@ -73,22 +92,4 @@ resource "null_resource" "clone_playbooks" {
     "rm -rf /home/ubuntu/ansible-repo"
   ]
 }
-}
-
-resource "null_resource" "run_playbook" {
-  depends_on = [null_resource.clone_playbooks]
-
-  connection {
-    type        = "ssh"
-    host        = module.vm1.internal_ip_address
-    user        = "ubuntu"
-    private_key = file(var.ssh_key_path)
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "cd /home/ubuntu/ansible-playbooks",
-      "ansible-playbook -i inventory.ini playbook.yml"
-    ]
-  }
 }

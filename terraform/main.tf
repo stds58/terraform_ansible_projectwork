@@ -48,8 +48,9 @@ module "security_groups_vm2" {
   ingress_rules = [
     {
       protocol       = "tcp"
+      description    = "Allow SSH from vm1"
       port           = 22
-      v4_cidr_blocks = ["${module.vm1.external_ip_address}/32"] # Доступ к VM2 только из VM1
+      v4_cidr_blocks = ["${module.vm1.internal_ip_address}/32"] # Доступ к VM2 только из VM1
     }
   ]
 }
@@ -65,8 +66,9 @@ module "security_groups_vm3" {
   ingress_rules = [
     {
       protocol       = "tcp"
+      description    = "Allow SSH from vm1"
       port           = 22
-      v4_cidr_blocks = ["${module.vm1.external_ip_address}/32"] # Доступ к VM3 только из VM1
+      v4_cidr_blocks = ["${module.vm1.internal_ip_address}/32"] # Доступ к VM3 только из VM1
     }
   ]
 }
@@ -125,7 +127,7 @@ module "vm2" {
   disk_size     = 20
   disk_type     = "network-ssd"
   subnet_id     = module.subnetwork.subnet_id
-  security_group_ids = [module.security_groups_vm1.security_group_id]
+  security_group_ids = [module.security_groups_vm2.security_group_id]
   ssh_key_path  = "~/.ssh/terraform_20250320.pub"
   metadata = {
     ssh-keys  = "ubuntu:${file(var.ssh_key_path)}"
@@ -153,10 +155,10 @@ module "vm3" {
   disk_size     = 20
   disk_type     = "network-ssd"
   subnet_id     = module.subnetwork.subnet_id
-  security_group_ids = [module.security_groups_vm1.security_group_id]
+  security_group_ids = [module.security_groups_vm3.security_group_id]
   ssh_key_path  = "~/.ssh/terraform_20250320.pub"
   metadata = {
-    ssh-keys  = "centos:${file(var.ssh_key_path)}"
+    ssh-keys  = "cloud-user:${file(var.ssh_key_path)}"
   }
   labels = {
   environment = "app-dev"
