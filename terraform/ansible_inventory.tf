@@ -42,10 +42,35 @@ resource "null_resource" "clone_playbooks" {
 
   provisioner "remote-exec" {
   inline = [
-    "sudo apt install -y git", # Установка Git, если его нет
-    "if ! ansible --version >/dev/null 2>&1; then sudo apt install -y ansible; fi", # Установка Ansible, если его нет
-    "echo 'Cloning repository from GitHub...'",
-    "if git clone https://stds58:${var.github_token}@github.com/stds58/ansible_projectwork.git /home/ubuntu/ansible; then echo 'Repository cloned successfully'; else echo 'Failed to clone repository'; fi"
+    # Установка Git, если его нет
+    "sudo apt update && sudo apt install -y git",
+
+    # Установка Ansible, если его нет
+    "if ! ansible --version >/dev/null 2>&1; then sudo apt install -y ansible; fi",
+
+    # Создание директории для репозитория
+    "mkdir -p /home/ubuntu/ansible-repo && cd /home/ubuntu/ansible-repo",
+
+    # Инициализация Git-репозитория
+    "git init",
+
+    # Добавление удаленного репозитория
+    "git remote add origin https://stds58:${var.github_token}@github.com/stds58/terraform_ansible_projectwork.git",
+
+    # Включение sparse-checkout
+    "git sparse-checkout init --cone",
+
+    # Указание папки для загрузки (например, ansible)
+    "git sparse-checkout set ansible",
+
+    # Загрузка данных из репозитория
+    "git pull origin master",
+
+    # Копирование нужной папки в целевую директорию
+    "cp -r /home/ubuntu/ansible-repo/ansible /home/ubuntu/ansible",
+
+    # Очистка временных файлов
+    "rm -rf /home/ubuntu/ansible-repo"
   ]
 }
 }
