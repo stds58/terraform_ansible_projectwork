@@ -1,0 +1,5 @@
+bucket     = "vard-mvp"
+key        = "terraform.tfstate"
+region     = "ru-central1"
+access_key = "cccccc"
+secret_key = "ccccc"

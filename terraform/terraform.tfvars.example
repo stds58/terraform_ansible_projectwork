@@ -1,0 +1,6 @@
+cloud_id                 = "dddd"
+folder_id                = "ddd"
+token                    = "ddddd"
+service_account_key_file = "C:/pitonprojekt/vard_devops/terraform/keys/authorized_key.json"
+storage_access_key       = "your-access-key"
+storage_secret_key       = "your-secret-key"
