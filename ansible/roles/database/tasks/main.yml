@@ -1,0 +1,39 @@
+---
+- name: Ensure PostgreSQL repository key is downloaded
+  get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /etc/apt/trusted.gpg.d/postgresql.asc
+    mode: '0644'
+  register: postgres_key_download
+
+- name: Add PostgreSQL official repository
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    state: present
+    filename: pgdg.list
+  when: postgres_key_download.changed
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: postgres_key_download.changed
+
+- name: Install PostgreSQL 14
+  apt:
+    name: postgresql-14
+    state: present
+
+- name: Ensure PostgreSQL service is started and enabled
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Check PostgreSQL version
+  command: psql --version
+  register: postgres_version
+  changed_when: false
+
+- name: Display PostgreSQL version
+  debug:
+    msg: "Installed PostgreSQL version: {{ postgres_version.stdout }}"

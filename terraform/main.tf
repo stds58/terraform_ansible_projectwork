@@ -127,7 +127,7 @@ module "vm2" {
   disk_size     = 20
   disk_type     = "network-ssd"
   subnet_id     = module.subnetwork.subnet_id
-  security_group_ids = [module.security_groups_vm2.security_group_id]
+  security_group_ids = [module.security_groups_vm1.security_group_id]
   ssh_key_path  = "~/.ssh/terraform_20250320.pub"
   metadata = {
     ssh-keys  = "ubuntu:${file(var.ssh_key_path)}"
@@ -155,7 +155,7 @@ module "vm3" {
   disk_size     = 20
   disk_type     = "network-ssd"
   subnet_id     = module.subnetwork.subnet_id
-  security_group_ids = [module.security_groups_vm3.security_group_id]
+  security_group_ids = [module.security_groups_vm1.security_group_id]
   ssh_key_path  = "~/.ssh/terraform_20250320.pub"
   metadata = {
     ssh-keys  = "cloud-user:${file(var.ssh_key_path)}"

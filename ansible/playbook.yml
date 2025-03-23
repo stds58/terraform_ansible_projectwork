@@ -1,0 +1,16 @@
+---
+#    - role: common_centos
+#    - role: app
+#wsl ansible-playbook -i inventory playbook.yml
+- name: Configure database servers
+  hosts: database
+  become: yes
+  roles:
+    - role: database
+
+- name: Configure app servers
+  hosts: app
+  become: yes
+  roles:
+    - role: common_centos
+    - role: app
